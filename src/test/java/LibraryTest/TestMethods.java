@@ -1,11 +1,20 @@
 package LibraryTest;
+
 import Library.Actions;
 import io.restassured.response.Response;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
 
 
 public class TestMethods extends Actions {
+
+    @BeforeMethod
+    public void init() {
+        SetPayload();
+    }
 
     @Test
     public void testAddBook() {
@@ -17,7 +26,7 @@ public class TestMethods extends Actions {
     public void getBookByIdTest() {
         Response bookAdded = addBook(payload);
         Response bookId = getBook(IdURL, bookAdded.jsonPath().getString("ID"));
-        Assert.assertEquals("physics", bookId.jsonPath().getString("isbn[0]"));
+        assertEquals(bookId.jsonPath().getString("author[0]"), "Sonu");
     }
 
     @Test
@@ -26,14 +35,14 @@ public class TestMethods extends Actions {
         Response bookId = getBook(IdURL, bookAdded.jsonPath().getString("ID"));
         String author = bookId.jsonPath().getString("author[0]");
         Response bookName = getBook(NameURL, author);
-        Assert.assertEquals("physics", bookName.jsonPath().getString("isbn[0]"));
+        assertEquals(bookName.jsonPath().getString("book_name[0]"), "Chemistry");
     }
 
     @Test
-    public void removeBookTest() {
-        Response addingBook = addBook(payload);
-        Response output = deleteRequest("http://216.10.245.166/Library/DeleteBook.php", addingBook.jsonPath().getString("ID"));
-        Assert.assertEquals("book is successfully deleted",output.jsonPath().getString("msg"));
+    public void testDeleteBook() {
+        Response requestOutput = addBook(payload);
+        Response output = deleteRequest(DeleteBookURL, requestOutput.jsonPath().getString("ID"));
+        assertEquals(output.jsonPath().getString("msg"), "book is successfully deleted");
     }
 }
 

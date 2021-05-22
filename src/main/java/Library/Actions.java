@@ -6,6 +6,7 @@ import io.restassured.response.Response;
 import static io.restassured.RestAssured.given;
 
 public class Actions extends Setup {
+
     public Response addBook(String payload) {
         Response response = given().
                 contentType(ContentType.JSON).
@@ -32,7 +33,7 @@ public class Actions extends Setup {
         return response;
     }
 
-    public Response deleteRequest(String deleteUrl , String id) {
+    public Response deleteRequest(String deleteUrl, String id) {
         String deleteId = "{\n" +
                 "    \"ID\":" + id + "\n" +
                 "}";
@@ -42,6 +43,7 @@ public class Actions extends Setup {
                 .and()
                 .delete(deleteUrl)
                 .then()
+                .statusCode(200)
                 .extract().response();
         return response;
     }
